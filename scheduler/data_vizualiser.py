@@ -1,0 +1,2 @@
+class DataVisualizer(object):
+    pass
