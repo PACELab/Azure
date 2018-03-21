@@ -21,7 +21,7 @@ class Algorithm(object):
         self.avg_cpu_usage_lst = []
 
     def execute(self, tup):
-        c_d, vm_id, time_stamp, num_cores, ram_needed = tup
+        vm_id, time_stamp, num_cores, ram_needed,c_d = tup
         if self.server_num not in self.allocation_dict:
             self.allocation_dict[self.server_num] = Allocation()
             self.servers_used += 1
