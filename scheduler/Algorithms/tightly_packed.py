@@ -215,19 +215,33 @@ class Algorithm(object):
               self.prev_time_stamp_d = time_stamp
               self.prev_d_cores = num_cores
               self.prev_d_ram = ram_needed
+            self.write_to_file(pool_type=pool_type)
+
+    def write_to_file(self,pool_type):
         if config["mode"] == "debug":
+            output_file_path = config["actual_output_path"]
+            output_file_path = os.path.join(get_parent_path(), output_file_path)
             with open(output_file_path, "a") as f:
                 s = ""
                 for server_pool_type, value in config["servers"]["types"].iteritems():
-                    for num in xrange(value["server_number"]):
-                        c = self.allocation_dict[pool_type][num].num_cores_left
-                        r = self.allocation_dict[pool_type][num].ram_left
+                    for num in xrange(value["number"]):
+                        if num in self.allocation_dict[pool_type]:
+                            c = self.allocation_dict[pool_type][num].num_cores_left
+                        else:
+                            c = float(config["servers"]["types"][pool_type]["max_cores_per_server"])
+
+                        if num in self.allocation_dict[pool_type]:
+                            r = self.allocation_dict[pool_type][num].ram_left
+                        else:
+                            r = float(config["servers"]["types"][pool_type]["max_ram_per_server"])
                         n_s = "{c}_{r}".format(c=c, r=r)
                         s = s + n_s + ","
                 s = s+str(self.servers_used)+","
-                s = s + str(self.avg_ram_usage) + ","
-                s = s + str(self.avg_cpu_usage)
+                s = s + "{0:.4f}".format(round((self.cores_ratio_sum / self.servers_used),4))+","
+                s = s + "{0:.4f}".format(round((self.ram_ratio_sum / self.servers_used), 4))+"\n"
                 f.write(s)
+        else:
+            return
 
 
     def final(self):

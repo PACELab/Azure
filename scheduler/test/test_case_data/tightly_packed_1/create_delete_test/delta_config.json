@@ -1,7 +1,18 @@
 {
-  "feeder_file_path": "test/test_case_data/round_robin/create_delete_test/input.csv",
-  "algorithm": "round_robin",
-  "actual_output_path":"test/test_case_data/round_robin/create_delete_test/actual_output.csv",
-  "reference_output_path":"test/test_case_data/round_robin/create_delete_test/output.csv",
+  "servers": {
+    "number_of_servers": 10,
+    "types": {
+      "A": {
+        "server_number":0,
+        "number": 10,
+        "max_cores_per_server": 16,
+        "max_ram_per_server": 128
+      }
+    }
+   },
+  "feeder_file_path": "scheduler/test/test_case_data/tightly_packed_1/create_delete_test/input.csv",
+  "algorithm": "tightly_packed",
+  "actual_output_path":"scheduler/test/test_case_data/tightly_packed_1/create_delete_test/actual_output.csv",
+  "reference_output_path":"scheduler/test/test_case_data/tightly_packed_1/create_delete_test/output.csv",
   "mode":"debug"
 }
