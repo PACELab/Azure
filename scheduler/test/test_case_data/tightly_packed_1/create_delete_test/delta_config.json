@@ -1,0 +1,7 @@
+{
+  "feeder_file_path": "test/test_case_data/round_robin/create_delete_test/input.csv",
+  "algorithm": "round_robin",
+  "actual_output_path":"test/test_case_data/round_robin/create_delete_test/actual_output.csv",
+  "reference_output_path":"test/test_case_data/round_robin/create_delete_test/output.csv",
+  "mode":"debug"
+}

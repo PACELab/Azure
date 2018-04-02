@@ -1,0 +1,7 @@
+{
+  "feeder_file_path": "test/test_case_data/round_robin/no_ofservers_test/delta_config.json",
+  "algorithm": "round_robin",
+  "actual_output_path":"test/test_case_data/round_robin/allocation_test/actual_output.csv",
+  "reference_output_path":"test/test_case_data/round_robin/allocation_test/output.csv",
+  "mode":"debug"
+}

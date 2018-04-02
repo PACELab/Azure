@@ -2,7 +2,7 @@ import sys
 import os.path
 import os
 import json
-from collections import OrderedDict,defaultdict
+from collections import OrderedDict, defaultdict
 
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 sys.path.append(parent_dir)
@@ -14,15 +14,18 @@ import importlib
 from scheduler.feeder import Feeder
 from scheduler.config_loader import *
 
-path = "Algorithms." + config["algorithm"]
-algo = importlib.import_module(path)
+
 
 
 class Executor(object):
-    def __init__(self):
+    def __init__(self, mode="execute",feeder_path = None):
         self.algo_name = config["algorithm"]
+        self.mode = mode
+
 
     def execute(self):
+        path = "Algorithms." + config["algorithm"]
+        algo = importlib.import_module(path)
         algo_obj = algo.Algorithm()
         feeder_gen = Feeder().execute()
         prev_time_stamp, prev_action, pres_cores_create, pres_ram_create, pres_cores_delete, pres_ram_delete = 0, 'd', 0, 0, 0, 0

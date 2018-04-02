@@ -1,7 +1,8 @@
 from scheduler.config_loader import *
 import pickle
 
-fp = 'Graphs/{algo}/{cf}/data_store.file'.format(algo=config["algorithm"], cf=config_file)
+fp = 'scheduler/Graphs/{algo}/{cf}/data_store.file'.format(algo=config["algorithm"], cf=config_file)
+fp  = os.path.join(get_parent_path(),fp)
 
 
 class Store(object):

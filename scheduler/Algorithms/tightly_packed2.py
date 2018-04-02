@@ -51,6 +51,8 @@ class Algorithm(object):
         self.cores_deletion_time = []
         self.ram_deletion_lst = []
         self.ram_deletion_time = []
+        if config["mode"] == "debug" and os.path.exists(config["actual_output_path"]):
+            os.remove(config["actual_output_path"])
         
 
     def execute(self, tup):
@@ -214,6 +216,20 @@ class Algorithm(object):
               self.prev_time_stamp_d = time_stamp
               self.prev_d_cores = num_cores
               self.prev_d_ram = ram_needed
+        if config["mode"] == "debug":
+            with open(output_file_path, "a") as f:
+                s = ""
+                for server_pool_type, value in config["servers"]["types"].iteritems():
+                    for num in xrange(value["server_number"]):
+                        c = self.allocation_dict[pool_type][num].num_cores_left
+                        r = self.allocation_dict[pool_type][num].ram_left
+                        n_s = "{c}_{r}".format(c=c, r=r)
+                        s = s + n_s + ","
+                s = s+str(self.servers_used)+","
+                s = s + str(self.avg_ram_usage) + ","
+                s = s + str(self.avg_cpu_usage)
+                f.write(s)
+
 
     def final(self):
         self.cores_creation_lst.append(self.prev_c_cores)

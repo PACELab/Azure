@@ -16,6 +16,7 @@
       }
     }
    },
+  "mode":"execute",
   "feeder_file_path": "feeder_data.csv",
   "algorithm": "tightly_packed2"
 }
