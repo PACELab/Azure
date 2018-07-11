@@ -17,7 +17,9 @@
     }
    },
   "mode":"execute",
-  "feeder_file_path": "feeder_data.csv",
-  "algorithm": "tightly_packed"
+  "feeder_file_path": "scheduler/input.csv",
+  "algorithm": "tightly_packed2",
+  "actual_output_path":"scheduler/Graphs/tightly_packed2/config_16/actual_output.csv",
+  "reference_output_path":"scheduler/Graphs/tightly_packed2/config_16/reference_output.csv"
 }
 

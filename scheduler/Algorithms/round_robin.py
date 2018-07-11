@@ -246,10 +246,14 @@ class Algorithm(object):
             #if not data:
             #    self.ignore_vms_list.add(vm_id)    ### Need to handle this case elegantly...
             #    return
+            print "Starting Migration..."
             self.ignore_servers_list.add(data)
             self.execute(del_tup)
             self.execute(create_tup)
             self.ignore_servers_list.remove(data)
+            print "Finished Migration..."
+        else:
+            print c_d.strip(),"*******************************"
             
 
     def write_to_file(self,pool_type):

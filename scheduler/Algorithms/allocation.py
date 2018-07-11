@@ -8,3 +8,4 @@ class Allocation(object):
         self.ram_left = d["max_ram_per_server"]
         self.total_num_cores = d["max_cores_per_server"]
         self.total_ram = d["max_ram_per_server"]
+        self.vms = []

@@ -35,6 +35,8 @@ class Algorithm(object):
         self.cores_ratio_sum = 0
         self.ram_ratio_sum = 0
         self.ignore_vms_list = set()
+        self.ignore_servers_list = set()
+
         
         self.prev_time_stamp_c = 0
         self.prev_c_cores = 0
@@ -51,8 +53,9 @@ class Algorithm(object):
         self.cores_deletion_time = []
         self.ram_deletion_lst = []
         self.ram_deletion_time = []
-        if config["mode"] == "debug" and os.path.exists(config["actual_output_path"]):
-            os.remove(config["actual_output_path"])
+        path = os.path.join(get_parent_path(), config["actual_output_path"])
+        if config["mode"] == "debug" and path:
+            open(path, 'w').close()
         
 
     def execute(self, tup):
@@ -67,10 +70,16 @@ class Algorithm(object):
                 number_of_servers = value["number"]
                 if ram_needed > value["max_ram_per_server"] or num_cores > value["max_cores_per_server"]:
                     continue
+                p_f = 0
                 # print "num servers", number_of_servers
                 for _ in xrange(number_of_servers):
                     c_f = 0
                     # print "server number is ", self.server_num
+                    server_tup = (server_pool_type, value["server_number"])
+                    if server_tup in self.ignore_servers_list:
+                        print "Server: " + tup + " ignored because of migration.."
+                        value["server_number"] = (value["server_number"] + 1) % number_of_servers
+                        continue
                     if value["server_number"] not in self.allocation_dict[server_pool_type]:
                         # print "in allocation"
                         self.allocation_dict[server_pool_type][value["server_number"]] = Allocation(
@@ -78,16 +87,21 @@ class Algorithm(object):
                         c_f = 1
                         # print "num severs used", self.servers_used
 
+
                     if self.allocation_dict[server_pool_type][
                         value["server_number"]].num_cores_left - num_cores >= 0 and \
                             self.allocation_dict[server_pool_type][value["server_number"]].ram_left - ram_needed >= 0:
                         # print "in allocation dict"
                         if c_f == 1:
+                            print "Switching On Server: ", server_tup
                             self.servers_used += 1
                         tmp_num_cores = self.allocation_dict[server_pool_type][value["server_number"]].num_cores_left
                         tmp_ram = self.allocation_dict[server_pool_type][value["server_number"]].ram_left
                         self.allocation_dict[server_pool_type][value["server_number"]].num_cores_left -= num_cores
                         self.allocation_dict[server_pool_type][value["server_number"]].ram_left -= ram_needed
+                        print "Creating VM: " + vm_id + " on Server: ", server_tup, "Available Resources on Server after creation is: ", \
+                        self.allocation_dict[server_pool_type][value["server_number"]].ram_left, " RAM ", \
+                        self.allocation_dict[server_pool_type][value["server_number"]].num_cores_left, " Cores"
                         self.num_cores_used += num_cores
                         self.num_cores.append(self.num_cores_used)
                         self.num_cores_time.append(time_stamp)
@@ -138,11 +152,16 @@ class Algorithm(object):
                           self.prev_c_ram = ram_needed
                           
                         #value["server_number"] = (value["server_number"] + 1) % number_of_servers
+                        self.write_to_file(pool_type=server_pool_type)
                         return
                     else:
                         # print "num severs used else", self.servers_used
+                        if p_f==0:
+                          print "Searching server for VM: "+vm_id+" from server number - ", server_tup
+                          p_f=1
                         value["server_number"] = (value["server_number"] + 1) % number_of_servers
             else:
+                print "inside delete"
                 self.c += 1
                 print "ram", ram_needed
                 print "core", num_cores
@@ -158,7 +177,7 @@ class Algorithm(object):
                 # print "ram", self.allocation_dict[self.server_num].ram_left - ram_needed
                 raise OutOfResourceException()
 
-        else:
+        elif c_d.strip() == "d":
             data = self.vm_server_mapper[vm_id]
             if not data:
               self.ignore_vms_list.add(vm_id)
@@ -168,16 +187,15 @@ class Algorithm(object):
             tmp_ram = self.allocation_dict[pool_type][server_num].ram_left
             self.allocation_dict[pool_type][server_num].num_cores_left += num_cores
             self.allocation_dict[pool_type][server_num].ram_left += ram_needed
+            print "Deleting VM: " + vm_id + " from Server: ", data, "Available Resources on Server after deletion is: ", \
+            self.allocation_dict[pool_type][server_num].ram_left, " RAM ", self.allocation_dict[pool_type][
+                server_num].num_cores_left, " Cores"
             self.num_cores_used -= num_cores
             self.num_cores.append(self.num_cores_used)
             self.num_cores_time.append(time_stamp)
             self.ram_used -= ram_needed
             self.amount_ram.append(self.ram_used)
             self.amount_ram_time.append(time_stamp)
-            if self.allocation_dict[pool_type][server_num].num_cores_left == 0 and self.allocation_dict[pool_type][
-                server_num].ram_left == 0:
-                del self.allocation_dict[pool_type][server_num]
-                self.servers_used -= 1
             # compute average
             v = self.allocation_dict[pool_type][server_num]
             self.cores_ratio_sum = self.cores_ratio_sum + (
@@ -187,6 +205,10 @@ class Algorithm(object):
             (v.total_ram - v.ram_left) / float(v.total_ram)) - (
                         (v.total_ram - tmp_ram) / float(v.total_ram))
             
+            if self.allocation_dict[pool_type][server_num].num_cores_left == config["servers"]["types"][pool_type]["max_cores_per_server"] and self.allocation_dict[pool_type][
+                server_num].ram_left == config["servers"]["types"][pool_type]["max_ram_per_server"]:
+                del self.allocation_dict[pool_type][server_num]
+                self.servers_used -= 1
             prev_timestamp = self.avg_cpu_usage_time[-1]
             if time_stamp == prev_timestamp:
               del self.avg_cpu_usage_lst[-1]
@@ -216,6 +238,19 @@ class Algorithm(object):
               self.prev_d_cores = num_cores
               self.prev_d_ram = ram_needed
             self.write_to_file(pool_type=pool_type)
+            
+        elif c_d.strip() == "m":
+            vm_id, time_stamp, num_cores, ram_needed, c_d = tup
+            del_tup = (vm_id, time_stamp, num_cores, ram_needed, "d")
+            create_tup = (vm_id, time_stamp, num_cores, ram_needed, "c")
+            data = self.vm_server_mapper[vm_id]
+            #if not data:
+            #    self.ignore_vms_list.add(vm_id)    ### Need to handle this case elegantly...
+            #    return
+            self.ignore_servers_list.add(data)
+            self.execute(del_tup)
+            self.execute(create_tup)
+            self.ignore_servers_list.remove(data)
 
     def write_to_file(self,pool_type):
         if config["mode"] == "debug":

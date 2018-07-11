@@ -40,10 +40,12 @@ class Executor(object):
         Store(algo_obj)
 
     def common_visualize(self):
-        root_dir = "/mnt/azure_data/Azure/scheduler/Graphs"
+        root_dir = "/mnt/azure_data/AZURE/scheduler/Graphs"
         f_d = defaultdict(list)
         for dir_name, sub_dir_list, file_list in os.walk(root_dir):
+            print "dir",dir_name
             for fname in file_list:
+                print "fname is",fname,"dirname",dir_name
                 if fname == "data_store.file":
                     l = dir_name.split("/")
                     path = dir_name + "/data_store.file"
@@ -54,5 +56,5 @@ class Executor(object):
 # <creaated/destroyed,vm_id,time_stamp,num_cores,ram>
 if __name__ == "__main__":
     obj = Executor()
-    # obj.execute()
-    obj.common_visualize()
+    obj.execute()
+    # obj.common_visualize()

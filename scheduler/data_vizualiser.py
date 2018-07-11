@@ -34,6 +34,8 @@ class DataVisualizer(object):
         plt.ylabel('avg core utilization')
         savefig('{fp}/avg_core_utilization.jpeg'.format(fp=final_path))
         plt.figure(5)
+        #print self.data_obj.used_servers_time
+        #print self.data_obj.used_servers_lst
         plt.plot(self.data_obj.used_servers_time, self.data_obj.used_servers_lst)
         plt.ylabel('Total Servers Used')
         savefig('{fp}/servers_used.jpeg'.format(fp=final_path))
@@ -96,8 +98,9 @@ class DataVisualizer(object):
             os.makedirs(final_path)
 
     def common_visualiser(self, f_d):
-        base_path = 'Graphs'
+        base_path = '/mnt/azure_data/AZURE/scheduler/Graphs/common'
         c = 0
+        print  "fd is",f_d
         for key, value in f_d.iteritems():
             plt.figure(c)
             plt.ylabel('Total Servers Used')

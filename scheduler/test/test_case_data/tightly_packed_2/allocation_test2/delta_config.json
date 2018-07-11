@@ -11,7 +11,7 @@
     }
    },
   "feeder_file_path": "scheduler/test/test_case_data/tightly_packed_2/allocation_test2/input.csv",
-  "algorithm": "tightly_packed",
+  "algorithm": "tightly_packed2",
   "actual_output_path":"scheduler/test/test_case_data/tightly_packed_2/allocation_test2/actual_output.csv",
   "reference_output_path":"scheduler/test/test_case_data/tightly_packed_2/allocation_test2/output.csv",
   "mode":"debug"
