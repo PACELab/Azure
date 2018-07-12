@@ -1,0 +1,25 @@
+{
+  "servers": {
+    "number_of_servers": 140000,
+    "types": {
+      "A": {
+        "server_number":0,
+        "number": 0,
+        "max_cores_per_server": 8,
+        "max_ram_per_server": 64
+      },
+      "B":{
+        "server_number":0,
+        "number": 140000,
+        "max_cores_per_server": 16,
+        "max_ram_per_server": 128
+      }
+    }
+   },
+  "mode":"execute",
+  "feeder_file_path": "scheduler/feeder_data.csv",
+  "algorithm": "tightly_packed2",
+  "actual_output_path":"scheduler/Graphs/tightly_packed2/config_16/actual_output.csv",
+  "reference_output_path":"scheduler/Graphs/tightly_packed2/config_16/reference_output.csv"
+}
+
