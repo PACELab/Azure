@@ -1,0 +1,23 @@
+{
+  "servers": {
+    "number_of_servers": 13000,
+    "types": {
+      "A": {
+        "server_number":0,
+        "number": 135000,
+        "max_cores_per_server": 4,
+        "max_ram_per_server": 32
+      },
+      "B":{
+        "server_number":0,
+        "number": 10300,
+        "max_cores_per_server": 16,
+        "max_ram_per_server": 128
+      }
+    }
+  },
+  "mode":"execute",
+  "feeder_file_path": "feeder_data.csv",
+  "algorithm": "round_robin"
+}
+
