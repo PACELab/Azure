@@ -78,3 +78,9 @@ Contains several execution stats like
 4) Number of Vm's delayed
 5) Max core usage
 ```
+### Supporting scripts
+```
+1) csv_file_generator.py (reads task_events files of google trace and consolidates them into single google_events_data.csv which will be used by feeder )
+2) total_vm_delay_stat_calculator.py (this script calculates the total number of vms * dealy product for a given algorithm)
+
+```
