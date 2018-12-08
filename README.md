@@ -43,16 +43,6 @@ This framework provides API's  for analysing Azure and Google traces and simulat
 Path = ./Graphs/<algorithm>/config_16
 ```
 ### Design
-  
-```
-![alt text](./google.jpg)
-           config
-             |
-             v
-Feeder -> executor -> Algorithm -> Graphs
-                                \_> 
-This framework consists of these components
-1)Feeder (a basic generator which reads data from a given csv line by line)
-2)
-3)
-```
+ 
+![523](https://user-images.githubusercontent.com/31523851/49683422-b003ac00-fa92-11e8-8323-da656060a97d.jpg)
+
