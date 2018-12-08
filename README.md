@@ -47,15 +47,15 @@ Path = ./Graphs/<algorithm>/config_16
 ![523](https://user-images.githubusercontent.com/31523851/49683422-b003ac00-fa92-11e8-8323-da656060a97d.jpg)
 
 ```
+Executor:
+This is the core manager file.All code execution starts from here.
+Executor invokes and interacts with all the peripheral components.
+
 Feeder :
 Feeder reads data from the csv file and provides data to the scheduler line by line
 
 Config :
 Config configures the feeder,executor and the algorithm tunin parameters
-
-Executor:
-This is the core manager file.All code execution starts from here.
-Executor invokes and interacts with all the peripheral components.
 
 Algorithm:
 Algorithm has the core scheduling logic it accepts a input vm and scedules the vm on a server in the data center
