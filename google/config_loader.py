@@ -13,6 +13,7 @@ print config_path
 if not config:
     with open(config_path, "r") as conf:
         config = json.load(conf, object_pairs_hook=OrderedDict)
+        
 
 
 def get_parent_path():

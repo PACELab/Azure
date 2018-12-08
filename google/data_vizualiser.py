@@ -19,6 +19,9 @@ class DataVisualizer(object):
     def __init__(self, obj=None):
         if obj:
             self.data_obj = obj
+            """
+            To create custom locations for each variant of the same algorithm, we can add that here so that it creates unique path for each variant.
+            """
             if config["algorithm"]=='round_robin_delay_v2':
                 self.final_path = 'Graphs/{algo}/{cf}_d{delay}_md{max_delay}_sm{stdmultiplier}'.format(algo=config["algorithm"], cf=config_file, delay=config['delay_time'], max_delay=config['max_delay_time'], stdmultiplier=config['stdMultiplier'])
             elif config["algorithm"]=='round_robin_delay_v3':
@@ -30,10 +33,13 @@ class DataVisualizer(object):
             elif config["algorithm"]=='round_robin_delay_v4':
                 self.final_path = 'Graphs/{algo}/{cf}_d{delay}_md{max_delay}_m{multiplier}'.format(algo=config["algorithm"], cf=config_file, delay=config['delay_time'], max_delay=config['max_delay_time'], multiplier=config['multiplier'])
             else:
-                self.final_path = 'Graphs/{algo}/{cf}'.format(algo=config["algorithm"], cf=config_file)
+                self.final_path = 'Graphs/{algo}/{cf}_75std_5day'.format(algo=config["algorithm"], cf=config_file)
             if not os.path.isdir(self.final_path):
                 os.makedirs(self.final_path)
         else:
+            """
+            Initially we were using python pickle dumps to store algorith objects, but later we moved on to store data into txt files as python dumps consuming lot of memory.
+            """
             fp = "/mnt/google_data/scheduler/Graphs/round_robin_new/config_16/data_store.file1"
             fp2 = "/mnt/google_data/scheduler/Graphs/round_robin_delay_efficient/config_16/data_store.file2"
             # with open(fp, "rb") as f:
@@ -43,10 +49,6 @@ class DataVisualizer(object):
             with open(fp, "rb") as f:
                 OBJ = namedtuple('OBJ',['stats_time', 'num_cores'])
                 self.data_obj = OBJ._make(pickle.load(f))
-            #with open(fp2, "rb") as f:
-            #    OBJ = namedtuple('OBJ',['stats_time', 'num_cores', 'vm_delay_histogram'])
-            #    hist = pickle.load(f)
-            #    self.data_obj = OBJ._make([[],[]]+hist[0])
             print "Pickle Load Complete..."
             sys.stdout.flush()
             self.final_path = 'Graphs/{algo}/{cf}'.format(algo=config["algorithm"], cf=config_file)
@@ -65,7 +67,11 @@ class DataVisualizer(object):
           traceback.print_exc()
 
     def visualize(self):
-
+        """
+        This function uses core stats and delay stats to plot necessary Grpahs.
+        
+        Initially we used to plot a lot more graphs, but because of memory constraints we had to remove all unnecesary Grpahs which would provide an overview on many other things. For now, only cores_usage and cdf of delay of VMs is being plotted. Might need additional modification to plot other things.
+        """
         plt.figure()
         plt.plot(self.stats_time, self.num_cores)
         plt.ylabel('total num cores used')
@@ -81,7 +87,7 @@ class DataVisualizer(object):
         print "95th Percentile of Delayed VMs: ", float(np.percentile(self.cdf, 95) / 47657184) * 100
         print "99th Percentile of Delayed VMs: ", float(np.percentile(self.cdf, 99) / 47657184) * 100
 
-        print "Number of Delayed VMs: ", self.cdf[-1]
+        print "Number of Delayed VMs: ", self.cdf[-1]-self.cdf[0]
         print "Number of max delayed VMs: ", self.values[-1]
         print "Max Delay Time of a VM: ", self.keys[-1]
 
@@ -167,6 +173,9 @@ class DataVisualizer(object):
         ######
 
     def store_to_files(self):
+        """
+        This function writes to files both the core_stats and delay_stats.
+        """
         core_stats = "{}/core_stats.txt".format(self.final_path)
         with open(core_stats, 'w') as f:
             for time, cores in izip(self.stats_time, self.num_cores):
@@ -288,9 +297,12 @@ class DataVisualizer(object):
             savefig('{fp}/servers_used.jpeg'.format(fp=p))
 
     def tmp_visualize(self):
+        """
+        This function is used to plot all the graphs of diff algorithms into the same graph for comparision. Graphs might look clumsy. Try to plot with dpi=1000 for high quality images.
+        """
         base_line_path = "/mnt/google_data/scheduler/Graphs/round_robin_new/config_16_latest_fixed/core_stats.txt"
-        min_delay = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16_10min_crct_scheme/core_stats.txt"
-        wrong_scheme = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16/core_stats.txt"
+        greedy_delay = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16_greedy_10min/core_stats.txt"
+        fixed_delay = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16_fixed_10min/core_stats.txt"
         delay_efficient = "/mnt/google_data/scheduler/Graphs/round_robin_delay_efficient/config_16/core_stats.txt"
         combined_path = "/mnt/google_data/scheduler/Graphs/combined"
 
@@ -310,30 +322,30 @@ class DataVisualizer(object):
 
 
         # # 2thresholds
-        # with open(min_delay, "rb") as f:
-        #     x, y = [], []
-        #     for l in f:
-        #         x1, y1 = l.split(",")
-        #         x.append(x1)
-        #         y.append(y1)
-        #     print "loaded obj2"
-        #     plt.plot(x, y, marker='', linewidth=2)
-        #     del x
-        #     del y
-        #     sys.stdout.flush()
+        with open(greedy_delay, "rb") as f:
+            x, y = [], []
+            for l in f:
+                x1, y1 = l.split(",")
+                x.append(x1)
+                y.append(y1)
+            print "loaded obj2"
+            plt.plot(x, y, marker='', linewidth=2)
+            del x
+            del y
+            sys.stdout.flush()
 
         # 2thresholds_w
-        # with open(wrong_scheme, "rb") as f:
-        #     x, y = [], []
-        #     for l in f:
-        #         x1, y1 = l.split(",")
-        #         x.append(x1)
-        #         y.append(y1)
-        #     print "loaded obj3"
-        #     plt.plot(x, y, marker='', linewidth=2)
-        #     del x
-        #     del y
-        #     sys.stdout.flush()
+        with open(fixed_delay, "rb") as f:
+            x, y = [], []
+            for l in f:
+                x1, y1 = l.split(",")
+                x.append(x1)
+                y.append(y1)
+            print "loaded obj3"
+            plt.plot(x, y, marker='', linewidth=2)
+            del x
+            del y
+            sys.stdout.flush()
 
         # 1threshold
         with open(delay_efficient, "rb") as f:
@@ -348,10 +360,98 @@ class DataVisualizer(object):
             del y
             sys.stdout.flush()
 
-        # plt.legend(("baseline", "2thresholds", "2thresholds_w", "1threshold"))
-        plt.legend(("baseline",  "1threshold"))
+        plt.legend(("baseline", "greedy", "fixed","max"))
+        #plt.legend(("baseline",  "1threshold"))
         plt.ylabel('total num cores used')
         plt.xlabel('time')
         plt.ylim(6000, 9000)
-        savefig('{fp}/baseline_vstwo_thresholds_w.jpeg'.format(fp=combined_path))
+        savefig('{fp}/combined_core_usage.png'.format(fp=combined_path),dpi=1000)
         plt.close()
+        
+        """greedy_delay = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16_greedy_10min/delay_stats.txt"
+        fixed_delay = "/mnt/google_data/scheduler/Graphs/round_robin_min_delay/config_16_fixed_10min/delay_stats.txt"
+        delay_efficient = "/mnt/google_data/scheduler/Graphs/round_robin_delay_efficient/config_16/delay_stats.txt"
+        combined_path = "/mnt/google_data/scheduler/Graphs/combined"
+
+        plt.figure()
+
+        # # 2thresholds
+        
+        # 2thresholds_w
+        with open(fixed_delay, "rb") as f:
+            x, y = [], []
+            for l in f:
+                x1, y1 = l.split(",")
+                x.append(float(x1))
+                y.append(float(y1))
+            print "loaded obj3"
+            y = np.cumsum(np.array(y), dtype=np.float64)
+            print "Fixed: "
+            y = (y/float(y[-1]))*100
+            step=80
+            for j,i in zip(x,y):
+                if i>=step:
+                    print step,":",j
+                    step+=2
+            plt.plot(x, y, marker='', linewidth=2)
+            del x
+            del y
+            sys.stdout.flush()
+        
+        with open(greedy_delay, "rb") as f:
+            x, y = [], []
+            for l in f:
+                x1, y1 = l.split(",")
+                x.append(float(x1))
+                y.append(float(y1))
+            print "loaded obj2"
+            y = np.cumsum(np.array(y), dtype=np.float64)
+            print "Greedy: "
+            y = (y/float(y[-1]))*100
+            step=80
+            for j,i in zip(x,y):
+                if i>=step:
+                    print step,":",j
+                    step+=2
+            plt.plot(x, y, marker='', linewidth=2)
+            del x
+            del y
+            sys.stdout.flush()
+
+        # 1threshold
+        with open(delay_efficient, "rb") as f:
+            x, y = [], []
+            for l in f:
+                x1, y1 = l.split(",")
+                x.append(float(x1))
+                y.append(float(y1))
+            print "loaded obj4"
+            y = np.cumsum(np.array(y), dtype=np.float64)
+            print "Normal Delay: "
+            y = (y/float(y[-1]))*100
+            step=80
+            for j,i in zip(x,y):
+                if i>=step:
+                    print step,":",j
+                    step+=2
+            plt.plot(x, y, marker='', linewidth=2)
+            del x
+            del y
+            sys.stdout.flush()
+
+        plt.legend(("fixed","greedy","1threshold"))
+        plt.ylabel('CDF(in percentage)')
+        plt.xlabel('time')
+        plt.ylim(0, 140)
+        plt.yticks([0,10,20,30,40,50,60,70,80,90,100,110])
+        plt.grid()
+        savefig('{fp}/combined_cdf.png'.format(fp=combined_path),dpi=1000)
+        plt.ylim(80, 107)
+        plt.yticks([i for i in range(80,105,2)])
+        plt.grid()
+        savefig('{fp}/combined_cdf_80_100.png'.format(fp=combined_path),dpi=1000)
+        plt.ylim(90, 104)
+        plt.yticks([i for i in range(90,105,1)])
+        plt.grid()
+        savefig('{fp}/combined_cdf_90_100.png'.format(fp=combined_path),dpi=1000)
+        plt.close()"""

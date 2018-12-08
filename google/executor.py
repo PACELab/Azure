@@ -39,16 +39,18 @@ class Executor(object):
         prev_time_stamp, prev_action, pres_cores_create, pres_ram_create, pres_cores_delete, pres_ram_delete = 0, 'd', 0, 0, 0, 0
         for tup in feeder_gen:
             self.algo_obj.execute(tup)
-        # #consolidation_time = 2591700
-        # #algo_obj.consolidation(consolidation_time) #needed for dynamic VM placement algorithm
+        final_time = self.algo_obj.final(flag=True) #need to pass flag=True when we are iterating to make simulation time 0.
+        
+        """feeder_gen = Feeder(offset=final_time,max_time=720000000000).execute()
+        for tup in feeder_gen:
+            self.algo_obj.execute(tup)
         self.algo_obj.final()
-        # # algo_obj.remove_duplicate_times()
         try:
             Store1(self.algo_obj)
             Store2(self.algo_obj)
         except Exception as e:
             print e.message
-            traceback.print_exc()
+            traceback.print_exc()"""
         #self.load_previous_run_object()
         self.data_obj = DataVisualizer(self.algo_obj)
         #self.compare_delay_schemes()
@@ -56,12 +58,19 @@ class Executor(object):
         #self.data_obj.tmp_visualize()
         
     def compare_delay_schemes(self):
+        """
+        Does not work, needs to be updated for it to work. Once we run two seperate schemes, we might want to comapre two schemes. Here we can load the other schemes stats and compare them. For example we can plot them on the same graph.
+        """
         normal_scheme_file = "/mnt/azure_data/rakshith/scheduler/Graphs/round_robin/config_16/data_store.file"
         with open(normal_scheme_file,'rb') as f:
             self.normal_obj = pickle.load(f)
         self.data_obj.plot_two_schemes(self.normal_obj)
         
     def load_previous_run_object(self):
+        """
+        Does not work, needs to be updated for it to work. Instead of running the algorithm again, we can store them in txt files and load them without running the whole algorith again.
+        Currently we store delay_stats.txt and core_stats.txt which contains information about number of VMs delayed by what time and total number of cores used vs time respectively.
+        """
         delay_scheme_file = "/mnt/google_data/scheduler/Graphs/round_robin_new/config_16_unique/data_store.file"
         with open(delay_scheme_file,'rb') as f:
             self.algo_obj = pickle.load(f)
