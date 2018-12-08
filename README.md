@@ -46,3 +46,27 @@ Path = ./Graphs/<algorithm>/config_16
  
 ![523](https://user-images.githubusercontent.com/31523851/49683422-b003ac00-fa92-11e8-8323-da656060a97d.jpg)
 
+```
+Feeder :
+Feeder reads data from the csv file and provides data to the scheduler line by line
+
+Config :
+Config configures the feeder,executor and the algorithm tunin parameters
+
+Algorithm:
+Algorithm has the core scheduling logic it accepts a input vm and scedules the vm on a server in the data center
+1) round_robin_mvg_avg_delay (vm are dealyed when they cross second threshold  i.e  running_mean + stdmultipier * running_standard_deviation at max by a delay time defined in the config)
+2) round_robin_min_delay(same  as above except the second threshold is static)
+3) round_robin_delay( vms are delayed when the total core usage exceeds a threshold)
+
+Data Visualizer:
+Accepts a algorithm object and generates graphs for different parameters
+
+Supporting Logs:
+Contains several execution stats like
+1) Max vm delay time
+2) Vm delay percentiles
+3) Simulation delay time
+4) Number of Vm's delayed
+5) Max core usage
+```
