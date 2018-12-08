@@ -1,2 +1,7 @@
-# Azure
-python executor.py
+### How to run
+
+```
+  python executor.py
+
+```
+
