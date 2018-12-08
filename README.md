@@ -55,9 +55,17 @@ Config configures the feeder,executor and the algorithm tunin parameters
 
 Algorithm:
 Algorithm has the core scheduling logic it accepts a input vm and scedules the vm on a server in the data center
+Event based delay schemes
 1) round_robin_mvg_avg_delay (vm are dealyed when they cross second threshold  i.e  running_mean + stdmultipier * running_standard_deviation at max by a delay time defined in the config)
 2) round_robin_min_delay(same  as above except the second threshold is static)
-3) round_robin_delay( vms are delayed when the total core usage exceeds a threshold)
+3) round_robin_delay_efficient( vms are delayed when the total core usage exceeds a threshold)
+
+Time based delay schemes
+Different time based delay schemes are also present description for the same is present in the algorithm files
+1) round_robin_delay_v1
+2) round_robin_delay_v2
+3) round_robin_delay_v3
+4) round_robin_delay_v4
 
 Data Visualizer:
 Accepts a algorithm object and generates graphs for different parameters
