@@ -45,7 +45,7 @@ Path = ./Graphs/<algorithm>/config_16
 ### Design
   
 ```
-![alt text](https://www.google.com/search?q=google&rlz=1C1CHBF_enIN729IN729&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjS3PH91Y_fAhUMTt8KHb7QChsQ_AUIESgE&biw=1242&bih=604#imgrc=np0mvtYJ3iaxDM:)
+![alt text](./google.jpg)
            config
              |
              v
